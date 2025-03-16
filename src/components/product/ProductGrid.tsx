@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Product } from "@/lib/products";
 import ProductCard from "./ProductCard";
 import { cn } from "@/lib/utils";
@@ -10,12 +10,16 @@ interface ProductGridProps {
 }
 
 const ProductGrid = ({ products, className }: ProductGridProps) => {
-  // Add a small delay to each card to create a staggered animation effect
   const [isLoaded, setIsLoaded] = useState(false);
   
-  setTimeout(() => {
-    setIsLoaded(true);
-  }, 100);
+  useEffect(() => {
+    // Add a small delay to create a staggered animation effect
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div 
@@ -28,12 +32,11 @@ const ProductGrid = ({ products, className }: ProductGridProps) => {
         <div
           key={product.id}
           className={cn(
-            "transition-all duration-500 transform opacity-0",
-            isLoaded && "opacity-100 translate-y-0"
+            "transition-all duration-500 transform",
+            isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           )}
           style={{ 
-            transitionDelay: `${index * 100}ms`,
-            transform: isLoaded ? "translateY(0)" : "translateY(20px)" 
+            transitionDelay: `${index * 100}ms`
           }}
         >
           <ProductCard product={product} />
